@@ -1,5 +1,6 @@
 package org.panda.pdaily.service;
 
+import org.panda.pdaily.model.PDRequestModel;
 import org.panda.pdaily.util.PDHttpStatus;
 
 import java.util.HashMap;
@@ -47,4 +48,12 @@ public interface PDISecurityService {
      * @return 如果合法，返回 {@link PDHttpStatus} 中的SUCCESS
      */
     PDHttpStatus checkRequestParams(HashMap<String, Object> params);
+
+    /**
+     * 检查请求参数是否符合要求,请求参数的格式如下
+     *
+     * @param requestModel    请求参数
+     * @return 如果合法，返回 {@link PDHttpStatus} 中的SUCCESS
+     */
+    PDHttpStatus checkRequestParams(PDRequestModel requestModel);
 }

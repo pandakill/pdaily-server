@@ -3,6 +3,7 @@ package org.panda.pdaily.api;
 import org.apache.log4j.Logger;
 import org.panda.pdaily.bean.PDUserInfoBean;
 import org.panda.pdaily.mapper.PDUserMapper;
+import org.panda.pdaily.model.PDRequestModel;
 import org.panda.pdaily.model.PDResultData;
 import org.panda.pdaily.service.PDISecurityService;
 import org.panda.pdaily.service.PDITokenService;
@@ -11,10 +12,7 @@ import org.panda.pdaily.util.MD5;
 import org.panda.pdaily.util.PDHttpStatus;
 import org.panda.pdaily.util.PDRequestParamsUtil;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.HashMap;
 
@@ -128,6 +126,81 @@ public class PDTestAPI {
         result.put("birthday", userInfoBean.getBirthDay());
 
         return PDResultData.getSuccessData(result);
+    }
+
+    // 支持json的请求头
+    // 测试账号：userId=1，psw=fangzanpan，caller=chrome_test
+    @RequestMapping(value = "/test_post", method = RequestMethod.POST)
+    public PDResultData testPost(@RequestBody PDRequestModel requestModel) {
+
+        if (mSecurityService.checkRequestParams(requestModel) != PDHttpStatus.SUCCESS) {
+            return PDResultData.getHttpStatusData(mSecurityService.checkRequestParams(requestModel), null);
+        }
+
+        try {
+            HashMap<String, Object> data = (HashMap<String, Object>) requestModel.getData();
+            if (data == null) {
+                logger.info("登录失败：请求参数为空");
+                return PDResultData.getHttpStatusData(PDHttpStatus.FAIL_REQUEST_UNVALID_PARAMS, null);
+            }
+            long userId = Long.parseLong((String) data.get("user_id"));
+            String password = (String) data.get("password");
+
+            PDUserInfoBean userBean = mUserService.findUser(userId);
+            if (userBean == null) {
+                logger.info("登录失败：用户不存在");
+                return PDResultData.getHttpStatusData(PDHttpStatus.FAIL_USER_UNKNOWK, null);
+            } else {
+                if ("".equals(password) || password == null) {
+                    logger.info("登录失败：密码为空");
+                    return PDResultData.getHttpStatusData(PDHttpStatus.FAIL_USER_PSW_UNVALID, null);
+                }
+
+                String encodePsw = MD5.md5(password);
+                if (encodePsw == null || !encodePsw.equals(userBean.getPassword())) {
+                    logger.info("登录失败：与数据库密码不匹配");
+                    return PDResultData.getHttpStatusData(PDHttpStatus.FAIL_USER_PSW_UNVALID, null);
+                }
+
+                HashMap<String, Object> resultData = new HashMap<String, Object>();
+                resultData.put("user_id", userId);
+                String token = mTokenService.createTokenByUserIdAndCaller(userId, encodePsw, PDRequestParamsUtil.getClientCaller(requestModel));
+                resultData.put("token", token);
+                return PDResultData.getSuccessData(resultData);
+            }
+
+        } catch (Exception e) {
+            e.printStackTrace();
+            return PDResultData.getHttpStatusData(PDHttpStatus.FAIL_APPLICATION_ERROR, null);
+        }
+    }
+
+    // 支持json的请求头
+    // 测试账号：userId=1，psw=fangzanpan，caller=chrome_test
+    @RequestMapping(value = "/test_get_user_info", method = RequestMethod.POST)
+    public PDResultData getUserInfo(@RequestBody PDRequestModel requestModel) {
+
+        if (mSecurityService.checkRequestParams(requestModel) != PDHttpStatus.SUCCESS) {
+            return PDResultData.getHttpStatusData(mSecurityService.checkRequestParams(requestModel), null);
+        }
+
+        try {
+            HashMap<String, Object> data = (HashMap<String, Object>) requestModel.getData();
+            long userId = Long.parseLong((String) data.get("user_id"));
+            String token = (String) data.get("token");
+            String caller = PDRequestParamsUtil.getClientCaller(requestModel);
+            PDHttpStatus checkToken = mSecurityService.checkTokenAvailable(userId, caller, token);
+            if (checkToken != PDHttpStatus.SUCCESS) {
+                return PDResultData.getHttpStatusData(checkToken, null);
+            }
+
+            PDUserInfoBean userInfoBean = mUserService.findUser(userId);
+
+            return PDResultData.getSuccessData(userInfoBean);
+        } catch (Exception e) {
+            e.printStackTrace();
+            return PDResultData.getHttpStatusData(PDHttpStatus.FAIL_APPLICATION_ERROR, null);
+        }
     }
 
 }

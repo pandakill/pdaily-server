@@ -1,6 +1,7 @@
 package org.panda.pdaily.service;
 
 import org.apache.log4j.Logger;
+import org.panda.pdaily.model.PDRequestModel;
 import org.panda.pdaily.util.PDHttpStatus;
 import org.panda.pdaily.util.PDRequestParamsUtil;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -44,6 +45,19 @@ public class PDSecurityServiceImpl implements PDISecurityService {
         } else if (checkDataAvailable(PDRequestParamsUtil.getRequestParams(params), PDRequestParamsUtil.getSign(params))
                 != PDHttpStatus.SUCCESS) {
             return checkDataAvailable(PDRequestParamsUtil.getRequestParams(params), PDRequestParamsUtil.getSign(params));
+        }
+
+        return PDHttpStatus.SUCCESS;
+    }
+
+    public PDHttpStatus checkRequestParams(PDRequestModel requestModel) {
+        if (checkRequestID(PDRequestParamsUtil.getRequestId(requestModel)) != PDHttpStatus.SUCCESS) {
+            return checkRequestID(PDRequestParamsUtil.getRequestId(requestModel));
+        } else if (checkDataAvailable((HashMap<String, Object>) PDRequestParamsUtil.getRequestParams(requestModel, HashMap.class),
+                PDRequestParamsUtil.getSign(requestModel))
+                != PDHttpStatus.SUCCESS) {
+            return checkDataAvailable((HashMap<String, Object>) PDRequestParamsUtil.getRequestParams(requestModel, HashMap.class),
+                    PDRequestParamsUtil.getSign(requestModel));
         }
 
         return PDHttpStatus.SUCCESS;

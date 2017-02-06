@@ -1,5 +1,8 @@
 package org.panda.pdaily.util;
 
+import org.panda.pdaily.model.PDRequestModel;
+import org.springframework.util.StringUtils;
+
 import java.util.HashMap;
 
 /**
@@ -45,14 +48,34 @@ public class PDRequestParamsUtil {
         return -1;
     }
 
+    public static long getRequestId (PDRequestModel requestModel) {
+        if (null != requestModel.getId() && !"".equals(requestModel.getId())) {
+            return Long.parseLong(requestModel.getId());
+        }
+
+        return -1;
+    }
+
     public static String getEncrypt(HashMap<String, Object> params) {
-        if (null != params.get("encrypt")) {
-            try {
+        try {
+            if (null != params.get("encrypt")) {
                 return (String) params.get("encrypt");
-            } catch (Exception e) {
-                e.printStackTrace();
-                return null;
             }
+        } catch (Exception e) {
+            e.printStackTrace();
+            return null;
+        }
+        return null;
+    }
+
+    public static String getEncrypt(PDRequestModel requestModel) {
+        try {
+            if (!StringUtils.isEmpty(requestModel.getEncrypt())) {
+                    return requestModel.getEncrypt();
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+            return null;
         }
         return null;
     }
@@ -69,12 +92,19 @@ public class PDRequestParamsUtil {
         return null;
     }
 
-    public static String getClientVersion(HashMap<String, Object> params) {
-
+    public static <T> T getRequestParams(PDRequestModel requestModel, Class<T> targetClass) {
+        try {
+            if (null != requestModel.getData()) {
+                return (T) requestModel.getData();
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+            return null;
+        }
         return null;
     }
 
-    public static String getClientCaller(HashMap<String, Object> params) {
+    public static String getClientVersion(HashMap<String, Object> params) {
         try {
             HashMap<String, Object> clientInfo = (HashMap<String, Object>) params.get("client");
             return (String) clientInfo.get("version");
@@ -82,6 +112,40 @@ public class PDRequestParamsUtil {
             e.printStackTrace();
             return null;
         }
+    }
+
+    public static String getClientVersion(PDRequestModel requestModel) {
+        try {
+            if (!StringUtils.isEmpty(requestModel.getClient().getVersion())) {
+                return requestModel.getClient().getVersion();
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+            return null;
+        }
+        return null;
+    }
+
+    public static String getClientCaller(HashMap<String, Object> params) {
+        try {
+            HashMap<String, Object> clientInfo = (HashMap<String, Object>) params.get("client");
+            return (String) clientInfo.get("caller");
+        } catch (Exception e) {
+            e.printStackTrace();
+            return null;
+        }
+    }
+
+    public static String getClientCaller(PDRequestModel requestModel) {
+        try {
+            if (!StringUtils.isEmpty(requestModel.getClient().getCaller())) {
+                return requestModel.getClient().getCaller();
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+            return null;
+        }
+        return null;
     }
 
     public static String getClientDate(HashMap<String, Object> params) {
@@ -94,6 +158,18 @@ public class PDRequestParamsUtil {
         }
     }
 
+    public static long getClientDate(PDRequestModel requestModel) {
+        try {
+            if (!StringUtils.isEmpty(requestModel.getClient().getDate())) {
+                return Long.parseLong(requestModel.getClient().getDate());
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+            return 0;
+        }
+        return 0;
+    }
+
     public static String getSign(HashMap<String, Object> params) {
         try {
             return (String) params.get("sign");
@@ -103,13 +179,25 @@ public class PDRequestParamsUtil {
         }
     }
 
-    public static String getUserId(HashMap<String, Object> params) {
+    public static String getSign(PDRequestModel requestModel) {
         try {
-            HashMap<String, Object> dataInfo = (HashMap<String, Object>) params.get("data");
-            return (String) dataInfo.get("user_id");
+            if (!StringUtils.isEmpty(requestModel.getSign())) {
+                return requestModel.getSign();
+            }
         } catch (Exception e) {
             e.printStackTrace();
             return null;
+        }
+        return null;
+    }
+
+    public static long getUserId(HashMap<String, Object> params) {
+        try {
+            HashMap<String, Object> dataInfo = (HashMap<String, Object>) params.get("data");
+            return Long.parseLong((String) dataInfo.get("user_id"));
+        } catch (Exception e) {
+            e.printStackTrace();
+            return 0;
         }
     }
 
@@ -121,5 +209,18 @@ public class PDRequestParamsUtil {
             e.printStackTrace();
             return null;
         }
+    }
+
+    public static String getToken(PDRequestModel requestModel) {
+        try {
+            if (requestModel.getData() instanceof HashMap) {
+                HashMap<String, Object> data = (HashMap<String, Object>) requestModel.getData();
+                return (String) data.get("token");
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+            return null;
+        }
+        return null;
     }
 }
