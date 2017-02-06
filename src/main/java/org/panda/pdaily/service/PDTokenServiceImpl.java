@@ -1,16 +1,13 @@
 package org.panda.pdaily.service;
 
-import org.apache.catalina.util.MD5Encoder;
 import org.apache.log4j.Logger;
 import org.apache.tomcat.util.codec.binary.Base64;
 import org.panda.pdaily.bean.PDTokenBean;
 import org.panda.pdaily.dao.PDITokenDao;
+import org.panda.pdaily.util.MD5;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
-import sun.security.provider.MD5;
 
-import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
 
@@ -56,8 +53,9 @@ public class PDTokenServiceImpl implements PDITokenService {
     }
 
     /**
-     * 按照升序，password+userId进行base64加密
-     * 然后再将base64+时间戳进行md5加密存储
+     * 1、按照升序，password+userId进行md5加密
+     * 2、然后将步骤1加密所得的字符串+caller进行md5加密
+     * 3、将步骤3的加密字符串 + "_date=" + date 进行base64加密存储
      *
      * @param userId    用户唯一id
      * @param password  用户密码
@@ -66,12 +64,10 @@ public class PDTokenServiceImpl implements PDITokenService {
      */
     public String createTokenByUserIdAndCaller(long userId, String password, String caller) {
         PDTokenBean tokenBean = findTokenByUserIdAndCaller(userId, caller);
-        logger.info("createTokenByUserIdAndCaller() called with: " + "userId = [" + userId + "], password = [" + password + "], caller = [" + caller + "]");
-        String md5Psw = MD5Encoder.encode((password + userId).getBytes());
-        byte[] pswByte = (password + userId).getBytes();
-        logger.info("md5Psw : " + md5Psw + "; pswByte = " + pswByte);
+        String md5Psw = MD5.md5((password + userId));
+        md5Psw = MD5.md5(md5Psw + caller);
         long currentTimeMillis = System.currentTimeMillis();
-        String base64EncodeStr = caller + md5Psw + currentTimeMillis;
+        String base64EncodeStr = md5Psw + "_date=" + currentTimeMillis;
         String token = Base64.encodeBase64String(base64EncodeStr.getBytes());
 
         if (tokenBean != null) {
