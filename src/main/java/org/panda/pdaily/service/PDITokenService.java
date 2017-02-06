@@ -14,4 +14,6 @@ public interface PDITokenService extends PDIBaseDBService<PDTokenBean> {
     int deleteTokenByUserIdAndCaller(long userId, String caller);
 
     String createTokenByUserIdAndCaller(long userId, String password, String caller);
+
+    boolean isTokenAvailable(long userId, String caller, String token);
 }

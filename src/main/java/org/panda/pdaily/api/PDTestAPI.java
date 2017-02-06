@@ -84,4 +84,26 @@ public class PDTestAPI {
         return PDResultData.getSuccessData(result);
     }
 
+    @RequestMapping(value = "/test_get_user_info", method = RequestMethod.GET)
+    public PDResultData getUserInfo(@RequestParam HashMap<String, Object> params) {
+
+        long userId = Long.parseLong((String) params.get("user_id"));
+        String token = (String) params.get("token");
+        String caller = (String) params.get("caller");
+
+        PDHttpStatus checkToken = mSecurityService.checkTokenAvailable(userId, caller, token);
+        if (checkToken != PDHttpStatus.SUCCESS) {
+            return PDResultData.getHttpStatusData(checkToken, null);
+        }
+
+        PDUserInfoBean userInfoBean = mUserService.findUser(userId);
+
+        HashMap<String, Object> result = new HashMap<String, Object>();
+        result.put("user_id", userId);
+        result.put("user_name", userInfoBean.getUserName());
+        result.put("birthday", userInfoBean.getBirthDay());
+
+        return PDResultData.getSuccessData(result);
+    }
+
 }

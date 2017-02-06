@@ -22,7 +22,7 @@ public interface PDISecurityService {
      *
      * @return  如果合法，返回 {@link PDHttpStatus} 中的SUCCESS
      */
-    PDHttpStatus checkTokenAvailable(String token);
+    PDHttpStatus checkTokenAvailable(long userId, String caller, String token);
 
     /**
      * 检验请求参数是否合法

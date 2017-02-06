@@ -13,7 +13,7 @@ public class PDTokenBean implements Serializable {
     private long userId;
     private String token;
     private String caller;
-    private Date createDate;
+    private long createDate;
 
     public long getUserId() {
         return userId;
@@ -39,11 +39,11 @@ public class PDTokenBean implements Serializable {
         this.caller = caller;
     }
 
-    public Date getCreateDate() {
+    public long getCreateDate() {
         return createDate;
     }
 
-    public void setCreateDate(Date createDate) {
+    public void setCreateDate(long createDate) {
         this.createDate = createDate;
     }
 

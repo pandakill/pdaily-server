@@ -3,6 +3,7 @@ package org.panda.pdaily.service;
 import org.apache.log4j.Logger;
 import org.panda.pdaily.util.PDHttpStatus;
 import org.panda.pdaily.util.PDRequestParamsUtil;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.HashMap;
@@ -17,12 +18,15 @@ public class PDSecurityServiceImpl implements PDISecurityService {
 
     private Logger mLog = Logger.getLogger(PDSecurityServiceImpl.class);
 
-    public PDHttpStatus checkTokenAvailable(String token) {
-        if (token.equals("token")) {
-            return PDHttpStatus.SUCCESS;
-        }
+    @Autowired
+    private PDITokenService mTokenService;
 
-        return PDHttpStatus.FAIL_USER_TOKEN_UNVALID;
+    public PDHttpStatus checkTokenAvailable(long userId, String caller, String token) {
+        if (mTokenService.isTokenAvailable(userId, caller, token)) {
+            return PDHttpStatus.SUCCESS;
+        } else {
+            return PDHttpStatus.FAIL_USER_TOKEN_UNVALID;
+        }
     }
 
     public PDHttpStatus checkDataAvailable(HashMap<String, Object> data, String sign) {
