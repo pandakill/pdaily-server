@@ -5,6 +5,7 @@ import org.panda.pdaily.bean.PDUserInfoBean;
 import org.panda.pdaily.mapper.PDUserMapper;
 import org.panda.pdaily.model.PDRequestModel;
 import org.panda.pdaily.model.PDResultData;
+import org.panda.pdaily.model.response.PDRepUserInfoModel;
 import org.panda.pdaily.service.PDISecurityService;
 import org.panda.pdaily.service.PDITokenService;
 import org.panda.pdaily.service.PDIUserService;
@@ -196,7 +197,7 @@ public class PDTestAPI {
 
             PDUserInfoBean userInfoBean = mUserService.findUser(userId);
 
-            return PDResultData.getSuccessData(userInfoBean);
+            return PDResultData.getSuccessData(new PDRepUserInfoModel(userInfoBean));
         } catch (Exception e) {
             e.printStackTrace();
             return PDResultData.getHttpStatusData(PDHttpStatus.FAIL_APPLICATION_ERROR, null);
