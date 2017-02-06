@@ -7,7 +7,9 @@ import org.panda.pdaily.model.PDResultData;
 import org.panda.pdaily.service.PDISecurityService;
 import org.panda.pdaily.service.PDITokenService;
 import org.panda.pdaily.service.PDIUserService;
+import org.panda.pdaily.util.MD5;
 import org.panda.pdaily.util.PDHttpStatus;
+import org.panda.pdaily.util.PDRequestParamsUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -22,10 +24,10 @@ import java.util.HashMap;
  * Created by fangzanpan on 2017/2/4.
  */
 @RestController
-@RequestMapping(value = "/user")
+@RequestMapping(value = "/test")
 public class PDTestAPI {
 
-    private static Logger sLog = Logger.getLogger(PDTestAPI.class);
+    private static Logger logger = Logger.getLogger(PDTestAPI.class);
 
     @Autowired
     private PDIUserService mUserService;
@@ -38,8 +40,8 @@ public class PDTestAPI {
 
     @RequestMapping(value = "/test_api", method = RequestMethod.GET)
     public PDResultData testAPI(@RequestParam HashMap<String, Object> params) {
-        sLog.info("PARAMS : " + params.toString());
-        sLog.info("PATAMS.c : " + params.get("c").toString());
+        logger.info("PARAMS : " + params.toString());
+        logger.info("PATAMS.c : " + params.get("c").toString());
         String a = (String) params.get("a");
 //        PDHttpStatus checkResult = mSecurityService.checkTokenAvailable("1".equals(a) ? "token" : "token1");
 
@@ -54,34 +56,56 @@ public class PDTestAPI {
     @RequestMapping(value = "/test_mapper_get_users", method = RequestMethod.GET)
     public PDResultData testMapper() {
 
-        sLog.info("testMapper.size = " + (mUserMapper.getUsers() == null ? 0 : mUserMapper.getUsers().size()));
+        logger.info("testMapper.size = " + (mUserMapper.getUsers() == null ? 0 : mUserMapper.getUsers().size()));
 
         return PDResultData.getSuccessData(mUserMapper.getUsers());
     }
 
     @RequestMapping(value = "/test_get_users", method = RequestMethod.GET)
     public PDResultData testGetUsers() {
-        sLog.info("testGetUsers.size = " + (mUserService.findUserList() == null ? 0 : mUserService.findUserList().size()));
+        logger.info("testGetUsers.size = " + (mUserService.findUserList() == null ? 0 : mUserService.findUserList().size()));
         HashMap<String, Object> result = new HashMap<String, Object>();
         result.put("users", mUserService.findUserList());
         return PDResultData.getSuccessData(result);
     }
 
+    // 测试账号：userId=1，psw=fangzanpan，caller=chrome_test
     @RequestMapping(value = "/test_login", method = RequestMethod.GET)
     public PDResultData testLogin(@RequestParam HashMap<String, Object> params) {
-        long userId = Long.parseLong((String) params.get("user_id"));
-        String password = (String) params.get("password");
-        String caller = (String) params.get("caller");
+        try {
+            long userId = Long.parseLong((String) params.get("user_id"));
+            String password = (String) params.get("password");
+            String caller = (String) params.get("caller");
+            PDUserInfoBean userBean = mUserService.findUser(userId);
 
-        PDUserInfoBean userInfoBean = mUserService.findUser(userId);
+            if (userBean == null) {
+                logger.info("登录失败：用户不存在");
+                return PDResultData.getHttpStatusData(PDHttpStatus.FAIL_USER_UNKNOWK, null);
+            } else {
+                if ("".equals(password) || password == null) {
+                    logger.info("登录失败：密码为空");
+                    return PDResultData.getHttpStatusData(PDHttpStatus.FAIL_USER_PSW_UNVALID, null);
+                }
 
-        HashMap<String, Object> result = new HashMap<String, Object>();
-        result.put("user_id", userId);
-        result.put("token", mTokenService.createTokenByUserIdAndCaller(userId, password, caller));
-        result.put("user_name", userInfoBean.getUserName());
-        result.put("birthday", userInfoBean.getBirthDay());
+                String encodePsw = MD5.md5(password);
+                logger.info("加密后的密码是：" + encodePsw);
+                if (encodePsw == null || !encodePsw.equals(userBean.getPassword())) {
+                    logger.info("登录失败：与数据库密码不匹配");
+                    return PDResultData.getHttpStatusData(PDHttpStatus.FAIL_USER_PSW_UNVALID, null);
+                }
 
-        return PDResultData.getSuccessData(result);
+                HashMap<String, Object> resultData = new HashMap<String, Object>();
+                resultData.put("user_id", userId);
+                String token = mTokenService.createTokenByUserIdAndCaller(userId, encodePsw, caller);
+                resultData.put("token", token);
+                resultData.put("user_name", mUserService.findUser(userId).getUserName());
+                return PDResultData.getSuccessData(resultData);
+            }
+
+        } catch (Exception e) {
+            e.printStackTrace();
+            return PDResultData.getHttpStatusData(PDHttpStatus.FAIL_APPLICATION_ERROR, null);
+        }
     }
 
     @RequestMapping(value = "/test_get_user_info", method = RequestMethod.GET)
