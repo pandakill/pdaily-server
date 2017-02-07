@@ -2,6 +2,7 @@ package org.panda.pdaily.api;
 
 import org.apache.log4j.Logger;
 import org.panda.pdaily.bean.PDUserInfoBean;
+import org.panda.pdaily.model.PDRequestModel;
 import org.panda.pdaily.model.PDResultData;
 import org.panda.pdaily.service.PDISecurityService;
 import org.panda.pdaily.service.PDITokenService;
@@ -35,15 +36,15 @@ public class PDUserAPI {
     @Autowired
     private PDIUserService mUserService;
 
-    @RequestMapping(value = "/login", method = RequestMethod.GET)
-    public PDResultData login(@RequestParam HashMap<String, Object> params) {
+    @RequestMapping(value = "/login", method = RequestMethod.POST)
+    public PDResultData login(@RequestParam PDRequestModel requestModel) {
 
-        if (mSecurityService.checkRequestParams(params) != PDHttpStatus.SUCCESS) {
-            return PDResultData.getHttpStatusData(mSecurityService.checkRequestParams(params), null);
+        if (mSecurityService.checkRequestParams(requestModel) != PDHttpStatus.SUCCESS) {
+            return PDResultData.getHttpStatusData(mSecurityService.checkRequestParams(requestModel), null);
         }
 
         try {
-            HashMap<String, Object> data = PDRequestParamsUtil.getRequestParams(params);
+            HashMap<String, Object> data = PDRequestParamsUtil.getRequestParams(requestModel, HashMap.class);
             if (data == null) {
                 logger.info("登录失败：请求参数为空");
                 return PDResultData.getHttpStatusData(PDHttpStatus.FAIL_REQUEST_UNVALID_PARAMS, null);
@@ -69,7 +70,7 @@ public class PDUserAPI {
 
                 HashMap<String, Object> resultData = new HashMap<String, Object>();
                 resultData.put("user_id", userId);
-                String token = mTokenService.createTokenByUserIdAndCaller(userId, encodePsw, PDRequestParamsUtil.getClientCaller(params));
+                String token = mTokenService.createTokenByUserIdAndCaller(userId, encodePsw, PDRequestParamsUtil.getClientCaller(requestModel));
                 resultData.put("token", token);
                 return PDResultData.getSuccessData(null);
             }
