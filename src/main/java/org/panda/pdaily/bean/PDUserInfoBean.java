@@ -17,6 +17,7 @@ public class PDUserInfoBean implements Serializable {
     private Date birthDay;
     private int gender;
     private int attribute;
+    private String mobile;
 
     public PDUserInfoBean() {}
 
@@ -74,5 +75,13 @@ public class PDUserInfoBean implements Serializable {
 
     public void setAttribute(int attribute) {
         this.attribute = attribute;
+    }
+
+    public String getMobile() {
+        return mobile;
+    }
+
+    public void setMobile(String mobile) {
+        this.mobile = mobile;
     }
 }
