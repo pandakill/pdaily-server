@@ -2,9 +2,7 @@ package org.panda.pdaily.model.response;
 
 import org.panda.pdaily.bean.PDUserInfoBean;
 
-import java.io.Serializable;
 import java.text.SimpleDateFormat;
-import java.util.Date;
 
 /**
  * 返回的基本用户信息类
@@ -26,7 +24,7 @@ public class PDRepUserInfoModel extends PDBaseResponseModel {
         this.user_id = userInfoBean.getId() + "";
         this.user_name = userInfoBean.getUserName();
         this.icon_url = userInfoBean.getIconUrl();
-        this.birthday = new SimpleDateFormat("yyyy-MM-dd").format(userInfoBean.getBirthDay());
+        this.birthday = new SimpleDateFormat("yyyy-MM-dd").format(userInfoBean.getBirthday());
         this.gender = userInfoBean.getGender() == 1 ? "男" : "女";
         this.attribute = userInfoBean.getAttribute() + "";
     }

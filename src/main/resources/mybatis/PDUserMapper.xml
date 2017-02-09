@@ -12,13 +12,13 @@
         <result property="attribute" column="attribute" />
     </resultMap>
 
-    <select id="getUserById" resultMap="userMap" parameterType="long" resultType="org.panda.pdaily.bean.PDUserInfoBean">
+    <select id="getUserById" resultMap="userMap" parameterType="java.lang.Long" resultType="org.panda.pdaily.bean.PDUserInfoBean">
         SELECT *
         FROM T_USER_INFO
         WHERE ID = #{id}
     </select>
 
-    <select id="getUsers" resultMap="userMap" resultType="list">
+    <select id="getUsers" resultMap="userMap" resultType="List">
         SELECT *
         FROM T_USER_INFO
     </select>

@@ -2,7 +2,6 @@ package org.panda.pdaily.api;
 
 import org.apache.log4j.Logger;
 import org.panda.pdaily.bean.PDUserInfoBean;
-import org.panda.pdaily.mapper.PDUserMapper;
 import org.panda.pdaily.model.PDRequestModel;
 import org.panda.pdaily.model.PDResultData;
 import org.panda.pdaily.model.response.PDRepUserInfoModel;
@@ -34,8 +33,6 @@ public class PDTestAPI {
     private PDISecurityService mSecurityService;
     @Autowired
     private PDITokenService mTokenService;
-    @Autowired
-    private PDUserMapper mUserMapper;
 
     @RequestMapping(value = "/test_api", method = RequestMethod.GET)
     public PDResultData testAPI(@RequestParam HashMap<String, Object> params) {
@@ -55,9 +52,11 @@ public class PDTestAPI {
     @RequestMapping(value = "/test_mapper_get_users", method = RequestMethod.GET)
     public PDResultData testMapper() {
 
-        logger.info("testMapper.size = " + (mUserMapper.getUsers() == null ? 0 : mUserMapper.getUsers().size()));
+        logger.info("testMapper.size = " + (mUserService.findUserList() == null ? 0 : mUserService.findUserList()));
+        HashMap<String, Object> result = new HashMap<String, Object>();
+        result.put("users", mUserService.findUserList());
 
-        return PDResultData.getSuccessData(mUserMapper.getUsers());
+        return PDResultData.getSuccessData(result);
     }
 
     @RequestMapping(value = "/test_get_users", method = RequestMethod.GET)
@@ -124,7 +123,7 @@ public class PDTestAPI {
         HashMap<String, Object> result = new HashMap<String, Object>();
         result.put("user_id", userId);
         result.put("user_name", userInfoBean.getUserName());
-        result.put("birthday", userInfoBean.getBirthDay());
+        result.put("birthday", userInfoBean.getBirthday());
 
         return PDResultData.getSuccessData(result);
     }

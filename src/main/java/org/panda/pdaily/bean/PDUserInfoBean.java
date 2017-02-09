@@ -1,7 +1,6 @@
 package org.panda.pdaily.bean;
 
 import java.io.Serializable;
-import java.util.Date;
 
 /**
  * 用户数据库实体类型
@@ -14,7 +13,7 @@ public class PDUserInfoBean implements Serializable {
     private String iconUrl;
     private String userName;
     private String password;
-    private Date birthDay;
+    private long birthday;
     private int gender;
     private int attribute;
     private String mobile;
@@ -53,14 +52,6 @@ public class PDUserInfoBean implements Serializable {
         this.password = password;
     }
 
-    public Date getBirthDay() {
-        return birthDay;
-    }
-
-    public void setBirthDay(Date birthDay) {
-        this.birthDay = birthDay;
-    }
-
     public int getGender() {
         return gender;
     }
@@ -83,5 +74,27 @@ public class PDUserInfoBean implements Serializable {
 
     public void setMobile(String mobile) {
         this.mobile = mobile;
+    }
+
+    public long getBirthday() {
+        return birthday;
+    }
+
+    public void setBirthday(long birthday) {
+        this.birthday = birthday;
+    }
+
+    @Override
+    public String toString() {
+        return "PDUserInfoBean{" +
+                "id=" + id +
+                ", iconUrl='" + iconUrl + '\'' +
+                ", userName='" + userName + '\'' +
+                ", password='" + password + '\'' +
+                ", birthday=" + birthday +
+                ", gender=" + gender +
+                ", attribute=" + attribute +
+                ", mobile='" + mobile + '\'' +
+                '}';
     }
 }

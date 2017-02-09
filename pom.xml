@@ -68,17 +68,12 @@
             <artifactId>druid</artifactId>
             <version>1.0.14</version>
         </dependency>
-        <!-- mybatis -->
-        <!--<dependency>-->
-            <!--<groupId>org.mybatis</groupId>-->
-            <!--<artifactId>mybatis</artifactId>-->
-            <!--<version>3.2.8</version>-->
-        <!--</dependency>-->
-        <!--<dependency>-->
-            <!--<groupId>org.mybatis</groupId>-->
-            <!--<artifactId>mybatis-spring</artifactId>-->
-            <!--<version>1.2.2</version>-->
-        <!--</dependency>-->
+        <!-- mybatis 分页插件 -->
+        <dependency>
+            <groupId>com.github.pagehelper</groupId>
+            <artifactId>pagehelper</artifactId>
+            <version>4.1.6</version>
+        </dependency>
 
         <!-- log related -->
         <dependency> <!-- 引入log4j2依赖 -->
