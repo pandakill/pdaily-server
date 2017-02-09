@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="org.panda.pdaily.mapper.PDDailyContentMapper">
+
+    <resultMap id="dailyContentMap" type="org.panda.pdaily.bean.PDDailyContentBean">
+        <id property="id" column="id" />
+        <result property="userId" column="user_id" />
+        <result property="weatherId" column="weather_id" />
+        <result property="title" column="title" />
+        <result property="content" column="content" />
+        <result property="picAddress" column="pic_address" />
+        <result property="latitude" column="latitude" />
+        <result property="longitude" column="longitude" />
+        <result property="address" column="address" />
+        <result property="publicDate" column="public_date" />
+        <result property="addressShowType" column="address_show_type" />
+        <result property="likeCount" column="like_count" />
+        <result property="isPublic" column="is_public" />
+        <result property="isDel" column="is_del" />
+        <result property="tags" column="tags" />
+        
+        <association property="userInfo" javaType="org.panda.pdaily.bean.PDUserInfoBean">
+            <id property="id" column="id" />
+            <result property="userName" column="user_name" />
+            <result property="iconUrl" column="icon_url" />
+            <result property="birthday" column="birthday" />
+            <result property="gender" column="gender" />
+            <result property="attribute" column="attribute" />
+        </association>
+    </resultMap>
+
+    <select id="getDailyContentById" resultMap="dailyContentMap" parameterType="java.lang.Long" resultType="org.panda.pdaily.bean.PDDailyContentBean">
+        SELECT *
+        FROM T_DAILY_CONTENT
+        WHERE ID = #{id}
+    </select>
+
+    <select id="getDailyContents" resultMap="dailyContentMap" resultType="List">
+        SELECT *
+        FROM T_DAILY_CONTENT
+    </select>
+
+    <select id="getDailyContentsByUserId" resultMap="dailyContentMap" parameterType="java.lang.Long" resultType="org.panda.pdaily.bean.PDDailyContentBean">
+        SELECT *
+        FROM T_DAILY_CONTENT dc, T_USER_INFO ui
+        WHERE dc.USER_ID = ui.id
+        AND ui.id = #{userId}
+    </select>
+
+</mapper>
