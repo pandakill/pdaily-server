@@ -203,4 +203,34 @@ public class PDTestAPI {
         }
     }
 
+    // 支持json的请求头
+    // 测试账号：userId=1，psw=fangzanpan，caller=chrome_test
+    @RequestMapping(value = "/get_user_daily_contents", method = RequestMethod.POST)
+    public PDResultData getUserDailyContents(@RequestBody PDRequestModel requestModel) {
+
+        if (mSecurityService.checkRequestParams(requestModel) != PDHttpStatus.SUCCESS) {
+            return PDResultData.getHttpStatusData(mSecurityService.checkRequestParams(requestModel), null);
+        }
+
+        try {
+            HashMap<String, Object> data = (HashMap<String, Object>) requestModel.getData();
+            long userId = Long.parseLong((String) data.get("user_id"));
+            String token = (String) data.get("token");
+            String caller = PDRequestParamsUtil.getClientCaller(requestModel);
+            PDHttpStatus checkToken = mSecurityService.checkTokenAvailable(userId, caller, token);
+            if (checkToken != PDHttpStatus.SUCCESS) {
+                return PDResultData.getHttpStatusData(checkToken, null);
+            }
+
+            HashMap<String, Object> result = new HashMap<String, Object>();
+            result.put("user_id", userId + "");
+            result.put("daily_contents", mUserService.findUserDailyContents(userId));
+
+            return PDResultData.getSuccessData(result);
+        } catch (Exception e) {
+            e.printStackTrace();
+            return PDResultData.getHttpStatusData(PDHttpStatus.FAIL_APPLICATION_ERROR, null);
+        }
+    }
+
 }

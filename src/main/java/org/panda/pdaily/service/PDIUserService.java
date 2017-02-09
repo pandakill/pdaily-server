@@ -1,6 +1,7 @@
 package org.panda.pdaily.service;
 
 
+import org.panda.pdaily.bean.PDDailyContentBean;
 import org.panda.pdaily.bean.PDUserInfoBean;
 
 import java.util.List;
@@ -17,4 +18,6 @@ public interface PDIUserService {
     int delete(Long id);
     PDUserInfoBean findUser(Long id);
     List<PDUserInfoBean> findUserList();
+
+    List<PDDailyContentBean> findUserDailyContents(long userId);
 }

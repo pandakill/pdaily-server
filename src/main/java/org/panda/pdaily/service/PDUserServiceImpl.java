@@ -1,7 +1,9 @@
 package org.panda.pdaily.service;
 
+import org.panda.pdaily.bean.PDDailyContentBean;
 import org.panda.pdaily.bean.PDUserInfoBean;
 import org.panda.pdaily.dao.PDIUserDao;
+import org.panda.pdaily.mapper.PDDailyContentMapper;
 import org.panda.pdaily.mapper.PDUserMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -22,6 +24,9 @@ public class PDUserServiceImpl implements PDIUserService {
     @Autowired
     private PDUserMapper mapper;
 
+    @Autowired
+    private PDDailyContentMapper dailyContentMapper;
+
     public int add(PDUserInfoBean user) {
         return userDao.add(user);
     }
@@ -41,5 +46,9 @@ public class PDUserServiceImpl implements PDIUserService {
     public List<PDUserInfoBean> findUserList() {
 //        return userDao.findBeans();
         return mapper.getUsers();
+    }
+
+    public List<PDDailyContentBean> findUserDailyContents(long userId) {
+        return dailyContentMapper.getDailyContentsByUserId(userId);
     }
 }

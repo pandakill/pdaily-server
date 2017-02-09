@@ -24,8 +24,8 @@ public class PDDailyContentBean implements Serializable {
 //    is_del	int(2)	No	0	是否删除，默认为0，1是，0否
 //    tags	varchar(244)	Yes	NULL	日记标签，保留
     private long id;
-    private long user_id;
-    private long weather_id;
+    private long userId;
+    private long weatherId;
     private String title;
     private String content;
     private String picAddress;
@@ -39,6 +39,8 @@ public class PDDailyContentBean implements Serializable {
     private int isDel;
     private String tags;
 
+    private PDUserInfoBean userInfo;
+
     public long getId() {
         return id;
     }
@@ -47,20 +49,20 @@ public class PDDailyContentBean implements Serializable {
         this.id = id;
     }
 
-    public long getUser_id() {
-        return user_id;
+    public long getUserId() {
+        return userId;
     }
 
-    public void setUser_id(long user_id) {
-        this.user_id = user_id;
+    public void setUserId(long userId) {
+        this.userId = userId;
     }
 
-    public long getWeather_id() {
-        return weather_id;
+    public long getWeatherId() {
+        return weatherId;
     }
 
-    public void setWeather_id(long weather_id) {
-        this.weather_id = weather_id;
+    public void setWeatherId(long weatherId) {
+        this.weatherId = weatherId;
     }
 
     public String getTitle() {
@@ -157,5 +159,35 @@ public class PDDailyContentBean implements Serializable {
 
     public void setTags(String tags) {
         this.tags = tags;
+    }
+
+    public PDUserInfoBean getUserInfo() {
+        return userInfo;
+    }
+
+    public void setUserInfo(PDUserInfoBean userInfo) {
+        this.userInfo = userInfo;
+    }
+
+    @Override
+    public String toString() {
+        return "PDDailyContentBean{" +
+                "id=" + id +
+                ", userId=" + userId +
+                ", weatherId=" + weatherId +
+                ", title='" + title + '\'' +
+                ", content='" + content + '\'' +
+                ", picAddress='" + picAddress + '\'' +
+                ", latitude=" + latitude +
+                ", longitude=" + longitude +
+                ", address='" + address + '\'' +
+                ", publicDate=" + publicDate +
+                ", addressShowType=" + addressShowType +
+                ", likeCount=" + likeCount +
+                ", isPublic=" + isPublic +
+                ", isDel=" + isDel +
+                ", tags='" + tags + '\'' +
+                ", userInfo=" + userInfo +
+                '}';
     }
 }
