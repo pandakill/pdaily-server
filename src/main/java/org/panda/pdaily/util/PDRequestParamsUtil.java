@@ -201,6 +201,19 @@ public class PDRequestParamsUtil {
         }
     }
 
+    public static long getUserId(PDRequestModel requestModel) {
+        try {
+            if (requestModel.getData() instanceof HashMap) {
+                HashMap<String, Object> data = (HashMap<String, Object>) requestModel.getData();
+                return Long.parseLong((String) data.get("user_id"));
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+            return 0;
+        }
+        return 0;
+    }
+
     public static String getToken(HashMap<String, Object> params) {
         try {
             HashMap<String, Object> dataInfo = (HashMap<String, Object>) params.get("data");

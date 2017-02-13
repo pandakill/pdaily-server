@@ -20,4 +20,6 @@ public interface PDIUserService {
     List<PDUserInfoBean> findUserList();
 
     List<PDDailyContentBean> findUserDailyContents(long userId);
+
+    PDUserInfoBean register(String mobile, String verCode, String password);
 }

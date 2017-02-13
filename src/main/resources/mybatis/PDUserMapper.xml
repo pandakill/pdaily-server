@@ -12,6 +12,23 @@
         <result property="attribute" column="attribute" />
     </resultMap>
 
+    <insert id="registerUser" useGeneratedKeys="true" keyProperty="id" parameterType="org.panda.pdaily.bean.PDUserInfoBean">
+        INSERT INTO T_USER_INFO(`mobile`, `password`) VALUES (#{mobile}, #{password})
+    </insert>
+
+    <update id="updateUserPsw" parameterType="org.panda.pdaily.bean.PDUserInfoBean">
+        UPDATE `T_USER_INFO`
+        SET `PASSWORD` = #{password}
+        WHERE `ID` = #{id}
+    </update>
+
+    <update id="updateUserInfo" parameterType="org.panda.pdaily.bean.PDUserInfoBean">
+        UPDATE `T_USER_INFO`
+        SET `PASSWORD` = #{password}, `ICON_URL` = #{iconUrl}, `USER_NAME` = #{userName}, `BIRTHDAY` = #{birthday},
+        `GENDER` = #{gender}, `attribute` = #{attribute}
+        WHERE `ID` = #{id}
+    </update>
+
     <select id="getUserById" resultMap="userMap" parameterType="java.lang.Long" resultType="org.panda.pdaily.bean.PDUserInfoBean">
         SELECT *
         FROM T_USER_INFO

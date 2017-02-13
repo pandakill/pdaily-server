@@ -11,10 +11,7 @@ import org.panda.pdaily.util.MD5;
 import org.panda.pdaily.util.PDHttpStatus;
 import org.panda.pdaily.util.PDRequestParamsUtil;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.HashMap;
 
@@ -81,8 +78,31 @@ public class PDUserAPI {
         }
     }
 
-    public PDResultData register(@RequestParam HashMap<String, Object> params) {
+    @RequestMapping(value = "/register", method = RequestMethod.POST)
+    public PDResultData register(@RequestBody PDRequestModel requestModel) {
+        if (mSecurityService.checkRequestParams(requestModel) != PDHttpStatus.SUCCESS) {
+            return PDResultData.getHttpStatusData(mSecurityService.checkRequestParams(requestModel), null);
+        }
 
-        return PDResultData.getSuccessData(null);
+        try {
+            HashMap<String, Object> data = PDRequestParamsUtil.getRequestParams(requestModel, HashMap.class);
+            if (data == null) {
+                return PDResultData.getHttpStatusData(PDHttpStatus.FAIL_REQUEST, null);
+            }
+
+            String mobile = (String) data.get("mobile");
+            String verCode = (String) data.get("ver_code");
+            String password = (String) data.get("password");
+
+            PDUserInfoBean userInfoBean = mUserService.register(mobile, verCode, password);
+            if (userInfoBean != null) {
+                return PDResultData.getSuccessData(userInfoBean);
+            } else {
+                return PDResultData.getHttpStatusData(PDHttpStatus.FAIL_REQUEST, null);
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+            return PDResultData.getHttpStatusData(PDHttpStatus.FAIL_APPLICATION_ERROR, null);
+        }
     }
 }

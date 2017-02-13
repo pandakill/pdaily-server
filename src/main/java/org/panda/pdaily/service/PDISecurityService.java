@@ -56,4 +56,12 @@ public interface PDISecurityService {
      * @return 如果合法，返回 {@link PDHttpStatus} 中的SUCCESS
      */
     PDHttpStatus checkRequestParams(PDRequestModel requestModel);
+
+    /**
+     * 根据请求参数判断token是否合法
+     *
+     * @param requestModel  请求参数
+     * @return 如果合法，返回 {@link PDHttpStatus} 中的SUCCESS
+     */
+    PDHttpStatus checkTokenAvailable(PDRequestModel requestModel);
 }

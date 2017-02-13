@@ -62,4 +62,11 @@ public class PDSecurityServiceImpl implements PDISecurityService {
 
         return PDHttpStatus.SUCCESS;
     }
+
+    public PDHttpStatus checkTokenAvailable(PDRequestModel requestModel) {
+        long userId = PDRequestParamsUtil.getUserId(requestModel);
+        String caller = PDRequestParamsUtil.getClientCaller(requestModel);
+        String token = PDRequestParamsUtil.getToken(requestModel);
+        return checkTokenAvailable(userId, caller, token);
+    }
 }

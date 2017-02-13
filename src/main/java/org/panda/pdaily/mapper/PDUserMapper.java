@@ -14,4 +14,8 @@ public interface PDUserMapper {
     List<PDUserInfoBean> getUsers();
 
     PDUserInfoBean getUserById(long id);
+
+    void registerUser(PDUserInfoBean userInfoBean);
+
+    void updateUserPsw(PDUserInfoBean userInfoBean);
 }
