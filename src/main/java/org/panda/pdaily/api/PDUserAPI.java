@@ -38,7 +38,7 @@ public class PDUserAPI {
     private PDIUserService mUserService;
 
     @RequestMapping(value = "/login", method = RequestMethod.POST)
-    public PDResultData login(@RequestParam PDRequestModel requestModel) {
+    public PDResultData login(@RequestBody PDRequestModel requestModel) {
 
         if (mSecurityService.checkRequestParams(requestModel) != PDHttpStatus.SUCCESS) {
             return PDResultData.getHttpStatusData(mSecurityService.checkRequestParams(requestModel), null);
@@ -50,7 +50,7 @@ public class PDUserAPI {
                 logger.info("登录失败：请求参数为空");
                 return PDResultData.getHttpStatusData(PDHttpStatus.FAIL_REQUEST_UNVALID_PARAMS, null);
             }
-            long userId = (Long) data.get("user_id");
+            long userId = PDRequestParamsUtil.getUserId(requestModel);
             String password = (String) data.get("password");
 
             PDUserInfoBean userBean = mUserService.findUser(userId);
