@@ -69,7 +69,9 @@ public class PDUserAPI {
                 resultData.put("user_id", userId);
                 String token = mTokenService.createTokenByUserIdAndCaller(userId, encodePsw, PDRequestParamsUtil.getClientCaller(requestModel));
                 resultData.put("token", token);
-                return PDResultData.getSuccessData(null);
+                resultData.put("mobile", userBean.getMobile());
+                resultData.put("user_name", userBean.getUserName());
+                return PDResultData.getSuccessData(resultData);
             }
 
         } catch (Exception e) {
@@ -95,11 +97,53 @@ public class PDUserAPI {
             String password = (String) data.get("password");
 
             PDUserInfoBean userInfoBean = mUserService.register(mobile, verCode, password);
+
+            HashMap<String, Object> resultData = new HashMap<String, Object>();
+
             if (userInfoBean != null) {
-                return PDResultData.getSuccessData(userInfoBean);
+                resultData.put("user_id", userInfoBean.getId() + "");
+                resultData.put("mobile", userInfoBean.getMobile());
+
+                return PDResultData.getSuccessData(resultData);
             } else {
                 return PDResultData.getHttpStatusData(PDHttpStatus.FAIL_REQUEST, null);
             }
+        } catch (Exception e) {
+            e.printStackTrace();
+            return PDResultData.getHttpStatusData(PDHttpStatus.FAIL_APPLICATION_ERROR, null);
+        }
+    }
+
+    @RequestMapping(value = "/get_user_info", method = RequestMethod.POST)
+    public PDResultData getUserInfo(@RequestBody PDRequestModel requestModel) {
+        if (mSecurityService.checkRequestParams(requestModel) != PDHttpStatus.SUCCESS) {
+            return PDResultData.getHttpStatusData(mSecurityService.checkRequestParams(requestModel), null);
+        }
+
+        try {
+            HashMap<String, Object> data = PDRequestParamsUtil.getRequestParams(requestModel, HashMap.class);
+            if (data == null) {
+                return PDResultData.getHttpStatusData(PDHttpStatus.FAIL_REQUEST, null);
+            }
+
+            PDHttpStatus checkToken = mSecurityService.checkTokenAvailable(requestModel);
+            if (checkToken != PDHttpStatus.SUCCESS) {
+                return PDResultData.getHttpStatusData(checkToken, null);
+            }
+
+            long userId = PDRequestParamsUtil.getUserId(requestModel);
+            PDUserInfoBean userInfoBean = mUserService.findUser(userId);
+
+            HashMap<String, Object> resultData = new HashMap<String, Object>();
+            resultData.put("user_id", userInfoBean.getId());
+            resultData.put("token", PDRequestParamsUtil.getToken(requestModel));
+            resultData.put("user_name", userInfoBean.getUserName());
+            resultData.put("mobile", userInfoBean.getMobile());
+            resultData.put("gender", userInfoBean.getGender());
+            resultData.put("attribute", userInfoBean.getAttribute());
+            resultData.put("birthday", userInfoBean.getBirthday());
+
+            return PDResultData.getSuccessData(resultData);
         } catch (Exception e) {
             e.printStackTrace();
             return PDResultData.getHttpStatusData(PDHttpStatus.FAIL_APPLICATION_ERROR, null);
