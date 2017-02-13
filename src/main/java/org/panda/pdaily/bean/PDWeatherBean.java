@@ -54,4 +54,15 @@ public class PDWeatherBean implements Serializable {
     public void setUserId(long userId) {
         this.userId = userId;
     }
+
+    @Override
+    public String toString() {
+        return "PDWeatherBean{" +
+                "id=" + id +
+                ", name='" + name + '\'' +
+                ", iconUrl='" + iconUrl + '\'' +
+                ", isPublic=" + isPublic +
+                ", userId=" + userId +
+                '}';
+    }
 }

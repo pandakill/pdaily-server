@@ -27,6 +27,14 @@
             <result property="gender" column="gender" />
             <result property="attribute" column="attribute" />
         </association>
+        
+        <association property="weatherInfo" javaType="org.panda.pdaily.bean.PDWeatherBean">
+            <id property="id" column="id" />
+            <result property="name" column="name" />
+            <result property="iconUrl" column="icon_url" />
+            <result property="isPublic" column="is_public" />
+            <result property="userId" column="user_id" />
+        </association>
     </resultMap>
 
     <select id="getDailyContentById" resultMap="dailyContentMap" parameterType="java.lang.Long" resultType="org.panda.pdaily.bean.PDDailyContentBean">
@@ -42,9 +50,10 @@
 
     <select id="getDailyContentsByUserId" resultMap="dailyContentMap" parameterType="java.lang.Long" resultType="org.panda.pdaily.bean.PDDailyContentBean">
         SELECT *
-        FROM T_DAILY_CONTENT dc, T_USER_INFO ui
+        FROM T_DAILY_CONTENT dc, T_USER_INFO ui, T_WEATHER weather
         WHERE dc.USER_ID = ui.id
         AND ui.id = #{userId}
+        AND dc.weather_id = weather.id
     </select>
 
 </mapper>

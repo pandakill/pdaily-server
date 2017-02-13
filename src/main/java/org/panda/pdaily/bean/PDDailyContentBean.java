@@ -40,6 +40,7 @@ public class PDDailyContentBean implements Serializable {
     private String tags;
 
     private PDUserInfoBean userInfo;
+    private PDWeatherBean weatherInfo;
 
     public long getId() {
         return id;
@@ -169,6 +170,14 @@ public class PDDailyContentBean implements Serializable {
         this.userInfo = userInfo;
     }
 
+    public PDWeatherBean getWeatherInfo() {
+        return weatherInfo;
+    }
+
+    public void setWeatherInfo(PDWeatherBean weatherBean) {
+        this.weatherInfo = weatherBean;
+    }
+
     @Override
     public String toString() {
         return "PDDailyContentBean{" +
@@ -188,6 +197,7 @@ public class PDDailyContentBean implements Serializable {
                 ", isDel=" + isDel +
                 ", tags='" + tags + '\'' +
                 ", userInfo=" + userInfo +
+                ", weatherInfo=" + weatherInfo +
                 '}';
     }
 }
