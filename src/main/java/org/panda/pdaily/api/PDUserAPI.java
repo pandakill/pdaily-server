@@ -16,7 +16,11 @@ import org.springframework.web.bind.annotation.*;
 import java.util.HashMap;
 
 /**
- * 用户的api
+ * 用户的api {
+ *     1. login：登录接口
+ *     2. register：注册接口
+ *     3. get_user_info:：获取用户信息接口
+ * }
  *
  * Created by fangzanpan on 2017/2/6.
  */
